@@ -11,3 +11,5 @@ P
  tests/product-provenance.test.ts,f/7/f703c9f37de6c86fb35b04c264bf50142e72b3d8
 O
 tests/quality-assurance.test.ts,b/c/bc0366f63a2541ed320c13edc49b354da4f8f6cc
+V
+&tests/stakeholder-verification.test.ts,0/2/02be0ea753b27962959f5c7a483b7eb28c39e76b
