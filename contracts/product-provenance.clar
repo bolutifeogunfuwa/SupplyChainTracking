@@ -1,5 +1,3 @@
-;; contracts/product-provenance.clar
-
 ;; Define constants
 (define-constant contract-owner tx-sender)
 (define-constant err-owner-only (err u100))
@@ -13,24 +11,18 @@
 (define-map products uint {
   name: (string-ascii 50),
   manufacturer: principal,
-  creation-time: uint,
   current-owner: principal
 })
 
 (define-map product-history uint (list 20 {
   owner: principal,
-  timestamp: uint,
-  location: (string-ascii 100)
+  timestamp: uint
 }))
-
-;; Private functions
-(define-private (is-owner)
-  (is-eq tx-sender contract-owner))
 
 ;; Public functions
 
 ;; Register a new product
-(define-public (register-product (name (string-ascii 50)) (location (string-ascii 100)))
+(define-public (register-product (name (string-ascii 50)))
   (let
     (
       (new-id (var-get next-product-id))
@@ -39,13 +31,11 @@
     (map-set products new-id {
       name: name,
       manufacturer: manufacturer,
-      creation-time: block-height,
       current-owner: manufacturer
     })
     (map-set product-history new-id (list {
       owner: manufacturer,
-      timestamp: block-height,
-      location: location
+      timestamp: block-height
     }))
     (var-set next-product-id (+ new-id u1))
     (ok new-id)
@@ -53,7 +43,7 @@
 )
 
 ;; Transfer product ownership
-(define-public (transfer-product (product-id uint) (new-owner principal) (location (string-ascii 100)))
+(define-public (transfer-product (product-id uint) (new-owner principal))
   (let
     (
       (product (unwrap! (map-get? products product-id) err-not-found))
@@ -63,8 +53,7 @@
     (map-set products product-id (merge product { current-owner: new-owner }))
     (map-set product-history product-id (unwrap-panic (as-max-len? (concat history (list {
       owner: new-owner,
-      timestamp: block-height,
-      location: location
+      timestamp: block-height
     })) u20)))
     (ok true)
   )

@@ -1,8 +1,4 @@
-;; contracts/stakeholder-verification.clar
-
 ;; Define constants
-(define-constant contract-owner tx-sender)
-(define-constant err-owner-only (err u100))
 (define-constant err-not-found (err u101))
 (define-constant err-unauthorized (err u102))
 (define-constant err-already-verified (err u103))
@@ -16,23 +12,7 @@
 
 (define-map verifiers principal bool)
 
-;; Private functions
-(define-private (is-owner)
-  (is-eq tx-sender contract-owner))
-
 ;; Public functions
-
-;; Add verifier
-(define-public (add-verifier (verifier principal))
-  (begin
-    (asserts! (is-owner) err-owner-only)
-    (ok (map-set verifiers verifier true))))
-
-;; Remove verifier
-(define-public (remove-verifier (verifier principal))
-  (begin
-    (asserts! (is-owner) err-owner-only)
-    (ok (map-delete verifiers verifier))))
 
 ;; Register stakeholder
 (define-public (register-stakeholder (name (string-ascii 50)) (role (string-ascii 20)))
@@ -62,3 +42,4 @@
 
 (define-read-only (is-verifier (verifier principal))
   (default-to false (map-get? verifiers verifier)))
+
